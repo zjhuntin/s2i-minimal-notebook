@@ -40,6 +40,30 @@ RUN chmod g+w /etc/passwd
 
 USER 1000
 
+# Set up Jupyter Notebook config
+ENV CONFIG /home/jovyan/.jupyter/jupyter_notebook_config.py
+ENV CONFIG_IPYTHON /home/jovyan/.ipython/profile_default/ipython_config.py
+
+RUN bash -c 'source activate base && rm /home/jovyan/.jupyter/jupyter_notebook_config.py && jupyter notebook --generate-config --allow-root && \
+    ipython profile create'
+
+RUN echo "c.NotebookApp.ip = '*'" >>${CONFIG} && \
+    echo "c.NotebookApp.open_browser = False" >>${CONFIG} && \
+    echo "c.NotebookApp.iopub_data_rate_limit=10000000000" >>${CONFIG} && \
+    echo "c.MultiKernelManager.default_kernel_name = 'python3'" >>${CONFIG}
+
+RUN echo "c.InteractiveShellApp.exec_lines = ['%matplotlib inline']" >>${CONFIG_IPYTHON}
+
+# ==== OUR STUFF FOLLOWS ====
+
+# Enable a more liberal Content-Security-Policy so that we can display Jupyter
+# in an iframe.
+RUN echo "c.NotebookApp.tornado_settings = {" >> /etc/jupyter/jupyter_notebook_config.py && \
+       echo "    'headers': {" >> /etc/jupyter/jupyter_notebook_config.py && \
+       echo "        'Content-Security-Policy': \"frame-ancestors 'self' *\"" >> /etc/jupyter/jupyter_notebook_config.py && \
+       echo "    }" >> /etc/jupyter/jupyter_notebook_config.py && \
+       echo "}" >> /etc/jupyter/jupyter_notebook_config.py
+
 # Override command to startup Jupyter notebook. The original is wrapped
 # so we can set an environment variable for notebook password.
 

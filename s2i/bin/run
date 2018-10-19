@@ -2,9 +2,23 @@
 
 set -eo pipefail
 
-# set default ip to 0.0.0.0
+
+### configuration ######################################################
+echo "
+#Setting Jupyter configuration ... "
+#jupyter notebook --generate-config
+#CONFIG=$"$HOME/.jupyter/jupyter_notebook_config.py"
+#if [ -f "$CONFIG" ]; then#
+#
+#    sed -i "s/c.NotebookApp.tornado_settings = {}/c.NotebookApp.tornado_settings = {'static_url_prefix':'\/notebook\/static\/'}/1" $CONFIG
+#    sed -i -E "s/#\s?c.NotebookApp.tornado_settings/c.NotebookApp.tornado_settings/1" $CONFIG
+#    echo "c.NotebookApp.tornado_settings = {'static_url_prefix':'/notebook/static/'}"
+#fi
+
+
+ set default ip to 0.0.0.0
 if [[ "$NOTEBOOK_ARGS $@" != *"--ip="* ]]; then
-  NOTEBOOK_ARGS="--ip=0.0.0.0 --NotebookApp.token='' --NotebookApp.allow_origin='*' --NotebookApp.tornado_settings=\"{'headers': {'Content-Security-Policy': \" default-src * \"}}\""
+  NOTEBOOK_ARGS="--ip=0.0.0.0 --NotebookApp.token=''"
 fi
 
 # Ensure that assigned uid has entry in /etc/passwd.
