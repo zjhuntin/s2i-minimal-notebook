@@ -1,4 +1,4 @@
-FROM jupyter/minimal-notebook:6d2a05346196
+FROM jupyter/minimal-notebook:latest
 
 # Switch to the root user so we can install additional packages.
 
@@ -66,7 +66,5 @@ RUN echo "c.NotebookApp.tornado_settings = {" >> /etc/jupyter/jupyter_notebook_c
 
 # Override command to startup Jupyter notebook. The original is wrapped
 # so we can set an environment variable for notebook password.
-
-RUN pip install plotly pandas numpy
 
 CMD [ "/opt/app-root/s2i/bin/run" ]
